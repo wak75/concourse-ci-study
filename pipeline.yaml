@@ -1,0 +1,24 @@
+resources:
+  - name: repo
+    type: git
+    source: 
+      uri: https://github.com/wak75/concourse-ci-study.git
+      branch: main
+
+jobs:
+  - name: print-hello-world-now
+    plan:
+      - get: repo
+        trigger: true
+      - task: just-say-hello
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          run:
+            path: sh
+            args:
+              - -c
+              - echo "Hello World"
