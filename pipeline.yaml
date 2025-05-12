@@ -1,16 +1,38 @@
 resources:
-  - name: repo
+  - name: service1-repo
     type: git
-    source: 
+    source:
       uri: https://github.com/wak75/concourse-ci-study.git
       branch: main
+      paths: ["service1/**"]
+
+  - name: service2-repo
+    type: git
+    source:
+      uri: https://github.com/wak75/concourse-ci-study.git
+      branch: main
+      paths: ["service2/**"]
+
+  - name: service3-repo
+    type: git
+    source:
+      uri: https://github.com/wak75/concourse-ci-study.git
+      branch: main
+      paths: ["service3/**"]
+
+  - name: service4-repo
+    type: git
+    source:
+      uri: https://github.com/wak75/concourse-ci-study.git
+      branch: main
+      paths: ["service4/**"]
 
 jobs:
-  - name: print-hello-world-now
+  - name: build-service-one
     plan:
-      - get: repo
+      - get: service1-repo
         trigger: true
-      - task: just-say-hello
+      - task: log-starting-service-one
         config:
           platform: linux
           image_resource:
@@ -21,4 +43,119 @@ jobs:
             path: sh
             args:
               - -c
-              - echo "this is anotherTesting"
+              - echo "Starting to build Service 1"
+      - task: building-service-one
+        config: 
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          inputs:
+            - name: service1-repo
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                echo "Building Service 1"
+                ls service1-repo/service1 || echo "No files found in service1"
+
+  - name: build-service-two
+    plan:
+      - get: service2-repo
+        trigger: true
+      - task: log-starting-service-two
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          run:
+            path: sh
+            args:
+              - -c
+              - echo "Starting to build Service 2"
+      - task: building-service-two
+        config: 
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          inputs:
+            - name: service2-repo
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                echo "Building Service 2"
+                ls service2-repo/service2 || echo "No files found in service2"
+
+  - name: build-service-three
+    plan:
+      - get: service3-repo
+        trigger: true
+      - task: log-starting-service-three
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          run:
+            path: sh
+            args:
+              - -c
+              - echo "Starting to build Service 3"
+      - task: building-service-three
+        config: 
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          inputs:
+            - name: service3-repo
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                echo "Building Service 3"
+                ls service3-repo/service3 || echo "No files found in service3"
+
+  - name: build-service-four
+    plan:
+      - get: service4-repo
+        trigger: true
+      - task: log-starting-service-four
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          run:
+            path: sh
+            args:
+              - -c
+              - echo "Starting to build Service 4"
+      - task: building-service-four
+        config: 
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: alpine
+          inputs:
+            - name: service4-repo
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                echo "Building Service 4"
+                ls service4-repo/service4 || echo "No files found in service4"
